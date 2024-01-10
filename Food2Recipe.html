@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<!--
+	Dopetrope by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Tyler DiPentima</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="left-sidebar is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<section id="header">
+
+					<!-- Logo -->
+					<h1><a href="https://www.linkedin.com/in/tyler-dipentima/" target="_blank">Tyler DiPentima</a></h1>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<ul>
+								<li><a href="index.html">Home</a></li>
+								<li><a href="Project_Main_Page.html">Projects</a></li>
+								<li><a href="Blog_Main_Page.html">Blogs</a></li>
+								<li><a href="About Me.html">About Me</a></li>
+							</ul>
+						</nav>
+
+				</section>
+
+			<!-- Main -->
+				<section id="main">
+					<div class="container">
+						<div class="row">
+							<div class="col-4 col-12-medium">
+
+								<!-- Sidebar -->
+								    
+								<section class="box">
+									<a href="Food2Recipe.html" class="image featured"><img src="images/DLFeature.jpg" alt="" /></a>
+									<header>
+										<h3>My Latest Project</h3>
+									</header>
+									<p>Recipe Generation from Food Image using Deep Learning</p>
+									<!-- <footer>
+										 <a href="Food2Recipe.html" class="button alt">Learn More</a> 
+									</footer> -->
+								</section>
+								<section class="box">
+									<header>
+										<h3>Other Posts</h3>
+									</header>
+									<p>Some more content that may interest you</p>
+									<ul class="divided">
+										<li><a href="Capstone.html">Target Malaria Project</a></li>
+										<li><a href="AnkiCozmo.html">Robotic Programming Project</a></li>
+									</ul>
+								</section>
+
+							</div>
+							<div class="col-8 col-12-medium imp-medium">
+
+								<!-- Content -->
+									<article class="box post">
+										<a class="image featured"><img src="images/DeepBanner.jpg" alt="" /></a>
+										<header>
+											<h2>Recipe Generation From Image Input </h2>
+											<p>Improving upon past research by introducing transformers </p>
+										</header>
+										<p>
+											For the full research paper please click <a href="Image2Recipe Academic Paper.pdf" target="_blank">here</a>.
+										</p>
+                                        <hr class="solid">
+										<section>
+											<header>
+												<h3>Introduction</h3>
+											</header>
+											<p>
+                                                In one of my most recent Masters courses focused on Deep Learning, I was asked to form a group and 
+												conduct research using the new concepts I had learned. My team and I came across work done by an MIT team (<a href="https://pic2recipe.csail.mit.edu/im2recipe/" target="_blank">Learn More</a>/<a href="https://www.researchgate.net/publication/328332173_Recipe1M_A_Dataset_for_Learning_Cross-Modal_Embeddings_for_Cooking_Recipes_and_Food_Images" target="_blank">Full Paper</a>)
+												where they created a multi-modal embedding of ingredient and instruction text and food image pictures webscrapped from popular
+												cooking sites. This dataset was known as Recipe1M and was one of the first to contain rich text and image data with 1 million text datapoints and 800,000 image datapoints.
+												The MIT models architecture can be seen below:
+											</p>
+											<center><a><img src="images/MITModel.jpg" width="700"></a></center>
+                                            <p>
+												The MIT team used joint encoder embeddings with a Cross Entropy and semantic regularization loss. This model was able to correctly predict the ingredients in a food image within the top-ten ingredients of the prediction rankings with a recall of around 70%, but took the researchers 3 days to train on 4 machines with large memory. These 
+												results were successfully reproduced. My team did not have this much time to train the model if we wanted to iterate over our propsed improvements. As a result, the two major goals we defined were
+												improving the recall scores compared to the MIT model and finding a way to train the model in a shorter amount or time with less resources. 
+											</p>
+											<header>
+												<h3>Our Approach and Results</h3>
+											</header>
+											<p>
+												It was clear to the team that the only way to reduce the training time for the model was to cut back on the size of the dataset by only training on a portion of it. I decided to treat this as a situation of low labelled data, attempting to few-shot learn a model. I did this by beginning with a pre-trained VGG-16 model, freezing the parameters, adding a new classification layer at the end of the model, and training this classification layer on a few examples
+												from the Recipe1M dataset, 5 examples for each class. This was only able to achieve around 13% recall due to the fact that this was a pure vision model. The Recipe1M dataset gets it's strength from its multi-modal data and was not optimized for use with a vision model.
+											</p>
+											<p>
+												For the next idea, we decided to proceed with only 1% of the dataset and train new model architectures from scratch. To provide a new baseline, the MIT model was re-trained on the subset of the dataset. Their model achieved 12% recall for top-10 rankings and a median recall of around 72, setting the bar for our model experimentation.
+												The first alteration we experimented with was changing the Cross-Entropy loss function for the baseline model. Though when re-trained with MSE loss, the model performance was negatively impacted.
+											</p>
+											<p>
+												Still seeking model improvements, the team focused in on the embedding for recipe and image data. The baseline model was using word2vec and a bidirectional LSTM for recipe embeddings, but with the recent craze around transformers we wanted to give that a try.
+												The textual embedding was replaced with a pre-trained all-MiniLM-L6-v2 sentence transformer which successfully produced embeddings as shown below for 10 classes. 
+											</p>
+											<center><a><img src="images/tsne.jpg" width="500"></a></center>
+											<p>
+												This change resulted in a slight improvement to top-ten recall of 1-2%. With this slight success, we decided to try the same approach 
+											    for the visual embedding, replacing the ResNet portion with a pre-trained ViT as advised by previous transformer research that exhibited ViT's higher performance than ResNet for some problem domains. The new vision embedding proved successful, reducing the median recall to only 47. We were on the right track.
+											</p>
+											
+											<p>
+												Finally, we combined our two successful experiments and re-trained the model with transformer embeddings for both the text and image data. Reaping the benefits of self-attention, the combined model resulted in a 3 times improvement in top-1 recall and a 33% reduction in median recall!
+											</p>
+											<center><a><img src="images/DLresults.jpg" width="300"></a></center>
+											<p>
+												The model also passed the eye test as we ran a few example images through the model and observed what ingredients
+												were predicted for the dish.
+											</p>
+											<center><a><img src="images/FtoRexamples.jpg" width="300"></a></center>
+										
+	
+										</section>
+									</article>
+
+							</div>
+						</div>
+					</div>
+				</section>
+
+			<!-- Footer -->
+			<section id="footer">
+				<div class="container">
+					<div class="row">
+						<!--
+						<div class="col-8 col-12-medium">
+							<section>
+								<header>
+									<h2>Blandit nisl adipiscing</h2>
+								</header>
+								<ul class="dates">
+									<li>
+										<span class="date">Jan <strong>27</strong></span>
+										<h3><a href="#">Lorem dolor sit amet veroeros</a></h3>
+										<p>Ipsum dolor sit amet veroeros consequat blandit ipsum phasellus lorem consequat etiam.</p>
+									</li>
+									<li>
+										<span class="date">Jan <strong>23</strong></span>
+										<h3><a href="#">Ipsum sed blandit nisl consequat</a></h3>
+										<p>Blandit phasellus lorem ipsum dolor tempor sapien tortor hendrerit adipiscing feugiat lorem.</p>
+									</li>
+									<li>
+										<span class="date">Jan <strong>15</strong></span>
+										<h3><a href="#">Magna tempus lorem feugiat</a></h3>
+										<p>Dolore consequat sed phasellus lorem sed etiam nullam dolor etiam sed amet sit consequat.</p>
+									</li>
+									<li>
+										<span class="date">Jan <strong>12</strong></span>
+										<h3><a href="#">Dolore tempus ipsum feugiat nulla</a></h3>
+										<p>Feugiat lorem dolor sed nullam tempus lorem ipsum dolor sit amet nullam consequat.</p>
+									</li>
+									<li>
+										<span class="date">Jan <strong>10</strong></span>
+										<h3><a href="#">Blandit tempus aliquam?</a></h3>
+										<p>Feugiat sed tempus blandit tempus adipiscing nisl lorem ipsum dolor sit amet dolore.</p>
+									</li>
+								</ul>
+							</section>
+						</div>
+						<div class="col-4 col-12-medium">
+							<section>
+								<header>
+									<h2></h2>
+								</header>
+								<a href="#" class="image featured"><img src="images/pic10.jpg" alt="" /></a>
+								<p>
+									This is <strong>Dopetrope</strong> a free, fully responsive HTML5 site template by
+									<a href="http://twitter.com/ajlkn">AJ</a> for <a href="http://html5up.net/">HTML5 UP</a> It's released for free under
+									the <a href="http://html5up.net/license/">Creative Commons Attribution</a> license so feel free to use it for any personal or commercial project &ndash; just don't forget to credit us!
+								</p>
+								<footer>
+									<ul class="actions">
+										<li><a href="#" class="button">Find out more</a></li>
+									</ul>
+								</footer>
+							</section>
+						</div>
+						-->
+						<div class="col-4 col-6-medium col-12-small">
+							<section>
+								<header>
+									<h2>Recent Online Learning</h2>
+								</header>
+								<ul class="divided">
+									<li><a href="https://cloud.google.com/blog/topics/training-certifications/12-days-of-no-cost-generative-ai-training?mkt_tok=ODA4LUdKVy0zMTQAAAGP2YNFoqIERCMWV0Amq18FYvWkGcjf7m7jHTNNJsVeNtvLX1NA6pFfTFYwDroT-zFbcEThQ-VBWzReeCrTV4cBP_8ToEn6ag2t1UUJUNgrowC5xqfYJCY" target="_blank">Google Generative AI</a></li>
+									<!--
+									<li><a href="#">Lorem ipsum dolor sit amet sit veroeros</a></li>
+									<li><a href="#">Sed et blandit consequat sed tlorem blandit</a></li>
+									<li><a href="#">Adipiscing feugiat phasellus sed tempus</a></li>
+									<li><a href="#">Hendrerit tortor vitae mattis tempor sapien</a></li>
+									<li><a href="#">Sem feugiat sapien id suscipit magna felis nec</a></li>
+									<li><a href="#">Elit class aptent taciti sociosqu ad litora</a></li>
+									-->
+								</ul>
+							</section>
+						</div>
+						<div class="col-4 col-6-medium col-12-small">
+							<section>
+								<header>
+									<h2>My Reading List</h2>
+								</header>
+								<ul class="divided">
+									<li><a href="https://www.goodreads.com/book/show/40796173-sprawlball?ref=nav_sb_ss_1_10" target="_blank">SprawlBall -- Data Evolution of the NBA</a></li>
+									<li><a href="https://www.goodreads.com/book/show/37822619-astroball?from_search=true&from_srp=true&qid=lECDPCfqmH&rank=1" target="_blank">Astroball -- Data Analytics in Baseball </a></li>
+									<li><a href="https://www.goodreads.com/book/show/42348376-secrets-of-sand-hill-road" target="_blank">Secrets of Sand Hill Road -- Venture Capital</a></li>
+									<!--
+									<li><a href="#">Lorem ipsum dolor sit amet sit veroeros</a></li>
+									<li><a href="#">Sed et blandit consequat sed tlorem blandit</a></li>
+									<li><a href="#">Adipiscing feugiat phasellus sed tempus</a></li>
+									<li><a href="#">Hendrerit tortor vitae mattis tempor sapien</a></li>
+									<li><a href="#">Sem feugiat sapien id suscipit magna felis nec</a></li>
+									<li><a href="#">Elit class aptent taciti sociosqu ad litora</a></li>
+									<li><a href="#">Elit class aptent taciti sociosqu ad litora</a></li>
+									<li><a href="#">Elit class aptent taciti sociosqu ad litora</a></li>
+									-->
+								</ul>
+							</section>
+						</div>
+						<div class="col-4 col-12-medium">
+							<section>
+								<header>
+									<h2>Social</h2>
+								</header>
+								<ul class="social">
+									<li><a class="icon brands fa-linkedin-in" href="https://www.linkedin.com/in/tyler-dipentima/" target="_blank"><span class="label">LinkedIn</span></a></li>
+								</ul>
+								<ul class="contact">
+									<li>
+										<h3>Residence</h3>
+										<p>
+											Atlanta, Georgia
+										</p>
+									</li>
+									<li>
+										<h3>Mail</h3>
+										<p>tdipentima3@gatech.edu</p>
+									</li>
+									<li>
+										<h3>Phone</h3>
+										<p>(954) 770-0483</p>
+									</li>
+								</ul>
+							</section>
+						</div>
+						<div class="col-12">
+
+							<!-- Copyright -->
+								<div id="copyright">
+									<ul class="links">
+										<li>&copy; TylerDiPentima. All rights reserved.</li><li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+									</ul>
+								</div>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
