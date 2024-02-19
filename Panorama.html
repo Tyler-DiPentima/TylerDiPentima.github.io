@@ -85,15 +85,15 @@
                                             <p>
 												This alignment requires the translation of one image into the perspective space of the other, which can be accomplished if you know the homography that
 												describes the perspective transformation between them. To calculate this 3x3 matrix we just need 4 point pairs that represent feature matches between
-												the two images. Once this is H matrix is solved for, it can be used to translate all points in one image into the perspective space of the other, thus giving
-												us our alignment needed for image stitching
+												the two images. Once this H matrix is solved for, it can be used to translate all points in one image into the perspective space of the other, thus giving
+												us our alignment needed for image stitching.
 											</p>
 											<center><a><img src="images/homography.png" ></a></center>
 											<header>
 												<h3>Feature Identification</h3>
 											</header>
 											<p>
-												With my knowledge of what a good feature looks like, typically focused on good multi-directional gradient flow and distinctiveness of a feature, I started by 
+												With my knowledge of what a good feature looks like, typically focused on good multi-directional gradient flow and distinctiveness, I started by 
 												manually choosing the 4 point pairs.
 											</p>
 											<center><a><img src="images/corner_selection.jpg" width="500"></a></center>
